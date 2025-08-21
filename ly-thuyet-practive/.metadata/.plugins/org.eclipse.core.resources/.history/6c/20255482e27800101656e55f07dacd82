@@ -1,0 +1,38 @@
+
+public class MultiTask{
+	private int n;
+
+    public MultiTask(int n) {
+        this.n = n;
+    }
+
+    // Tính giai thừa
+    public void calculateFactorial() {
+        long result = 1;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
+            System.out.println("[n!] i="+i);
+            try {
+				Thread.sleep(1000);
+			} catch(InterruptedException exception) {
+				System.out.println(exception.toString());
+			}
+        }
+        System.out.println("n!=" + result);
+    }
+
+    // Tính tổng từ 1 đến n
+    public void calculateSum() {
+        int sum=1;
+        for (int i=2; i<=n; i++) {
+        	sum += i;
+        	System.out.println("[SUM] i="+i);
+        	try {
+				Thread.sleep(500);
+			} catch(InterruptedException exception) {
+				System.out.println(exception.toString());
+			}
+        }
+        System.out.println("sum(n)=" + sum);
+    }
+}

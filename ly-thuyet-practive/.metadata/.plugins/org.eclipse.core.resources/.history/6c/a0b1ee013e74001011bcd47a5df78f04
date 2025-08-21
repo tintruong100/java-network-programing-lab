@@ -1,0 +1,24 @@
+package MyThread01_1Thread;
+
+import java.util.Scanner;
+
+public class Main {
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Nhap n");
+		int n = sc.nextInt();
+		int[] a = new int[n];
+		for (int i=0; i<n; i++) {
+			System.out.println("Nhap a["+i+"]");
+			a[i] = sc.nextInt();
+		}
+		MyThread t1 = new MyThread(a, true);
+		MyThread t2 = new MyThread(a, false);
+		t1.start();
+		t2.start();
+		
+		
+	}
+
+}

@@ -1,0 +1,20 @@
+package Demo_Synchronized;
+
+import java.io.Serializable;
+
+public class SV implements Serializable {
+    private String ID;
+    private String Name;
+    private String ClassName;
+
+    public SV(String ID, String Name, String ClassName) {
+        this.ID = ID;
+        this.Name = Name;
+        this.ClassName = ClassName;
+    }
+
+    @Override
+    public String toString() {
+        return ID + " - " + Name + " - " + ClassName;
+    }
+}

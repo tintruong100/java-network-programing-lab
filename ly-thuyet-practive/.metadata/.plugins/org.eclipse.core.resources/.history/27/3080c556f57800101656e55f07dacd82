@@ -1,0 +1,109 @@
+package Demo_Synchronized;
+
+public class a {
+	import java.io.*;
+	import java.util.*;
+
+	// ======= Đối tượng Sinh Viên =======
+	
+
+	// ======= Quản lý truy cập file (dùng synchronized) =======
+	class SVManager {
+	    private final String fileName = "SV.dat";
+
+	    // Đọc danh sách SV
+	    public synchronized void readSV() {
+	        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+	            List<SV> list = (List<SV>) ois.readObject();
+	            System.out.println("===== DANH SÁCH SV =====");
+	            for (SV sv : list) {
+	                System.out.println(sv);
+	            }
+	            System.out.println("========================");
+	        } catch (FileNotFoundException e) {
+	            System.out.println("File chưa tồn tại.");
+	        } catch (IOException | ClassNotFoundException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    // Thêm SV mới
+	    public synchronized void addSV(SV sv) {
+	        List<SV> list = new ArrayList<>();
+
+	        // Đọc danh sách cũ nếu có
+	        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+	            list = (List<SV>) ois.readObject();
+	        } catch (FileNotFoundException e) {
+	            // File chưa tồn tại -> tạo mới
+	        } catch (IOException | ClassNotFoundException e) {
+	            e.printStackTrace();
+	        }
+
+	        // Thêm SV mới
+	        list.add(sv);
+
+	        // Ghi lại file
+	        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+	            oos.writeObject(list);
+	            System.out.println("Đã thêm SV: " + sv);
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+	// ======= Thread đa năng (vừa đọc, vừa thêm) =======
+	class SVThread extends Thread {
+	    private SVManager manager;
+	    private String action; // "read" hoặc "add"
+	    private SV sv;         // dùng khi action = "add"
+
+	    public SVThread(SVManager manager, String action) {
+	        this.manager = manager;
+	        this.action = action;
+	    }
+
+	    public SVThread(SVManager manager, String action, SV sv) {
+	        this.manager = manager;
+	        this.action = action;
+	        this.sv = sv;
+	    }
+
+	    @Override
+	    public void run() {
+	        if ("read".equalsIgnoreCase(action)) {
+	            manager.readSV();
+	        } else if ("add".equalsIgnoreCase(action) && sv != null) {
+	            manager.addSV(sv);
+	        } else {
+	            System.out.println("Hành động không hợp lệ!");
+	        }
+	    }
+	}
+
+	// ======= Main =======
+	public class Main {
+	    public static void main(String[] args) {
+	        SVManager manager = new SVManager();
+
+	        // Thread thêm SV mới
+	        Thread addThread = new SVThread(manager, "add", new SV("SV003", "Nguyen Van C", "CNTT3"));
+
+	        // Thread đọc danh sách SV
+	        Thread readThread = new SVThread(manager, "read");
+
+	        try {
+	            // Chạy thêm SV trước
+	            addThread.start();
+	            addThread.join(); // Đợi thêm xong mới đọc
+
+	            // Sau đó đọc danh sách
+	            readThread.start();
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+}

@@ -1,0 +1,17 @@
+package MyThread01;
+
+public class tongAmThread extends Thread {
+	private int sum=0;
+	public void run(int[] a) {
+		for (int i=0; i<a.length; i++) {
+			if (a[i]<0) this.sum += a[i];
+			System.out.println("[tongAm] DANG KIEM TRA PHAN TU "+ i);
+			try {
+				Thread.sleep(1000);
+			} catch(InterruptedException exception) {
+				System.out.println(exception.toString());
+			}
+		}
+		System.out.println("[tongAm] Tong Am = "+ this.sum);
+	}
+}
